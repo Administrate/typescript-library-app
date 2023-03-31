@@ -1,0 +1,29 @@
+{
+  "name": "typescript-library-app",
+  "version": "1.0.0",
+  "description": "Sample cli app for advanced typescript blog",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "src": "ts-node --esm src/index.ts"
+  },
+  "keywords": [
+    "typescript",
+    "library",
+    "blog"
+  ],
+  "author": "Sean Newell",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "5.2.0",
+    "inquirer": "9.1.5"
+  },
+  "devDependencies": {
+    "typescript": "5.0.3",
+    "@types/inquirer": "9.0.3",
+    "@types/node": "18.15.11",
+    "ts-node": "10.9.1"
+  }
+}
