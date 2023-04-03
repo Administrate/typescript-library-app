@@ -1,3 +1,5 @@
+import { writeFile, readFile } from "fs/promises";
+
 const validChars = [
   "a",
   "b",
@@ -115,29 +117,90 @@ export function isPositiveInt(input: any): input is number {
   throw new Error("Must provide a positive integer");
 }
 
-const checkedOutBooks = new Set<BookId>();
-const bookList: Book[] = [];
+interface State {
+  books: Book[],
+  checkedOutBooks: Set<BookId>
+};
+
+let state: State = {
+  books: [],
+  checkedOutBooks: new Set()
+};
+
+const FILE_PATH = "state.data";
+
+function replacer(key: string, value: string) {
+  if (key === "checkedOutBooks") {
+    return Array.from(value);
+  }
+
+  return value;
+}
+
+function reviver(key: string, value: string) {
+  if (key === "checkedOutBooks") {
+    if (Array.isArray(value)) {
+      return new Set(value);
+    }
+
+    throw new Error("Invalid state, checkedOutBooks must be saved as an array");
+  }
+
+  return value;
+}
+
+// book list can be serialized straightaway as JSON
+// our Set will need a special serializer
+function saveState() {
+  const stringifiedState = JSON.stringify(state, replacer);
+  const utf8Buff = Buffer.from(stringifiedState, "utf-8");
+  const base64EncodedStateString = utf8Buff.toString("base64");
+
+  return writeFile(FILE_PATH, base64EncodedStateString);
+}
+
+async function restoreState() {
+  try {
+    const file = await readFile(FILE_PATH)
+    const b64String = file.toString();
+    const str = Buffer.from(b64String, "base64").toString("utf-8");
+
+    state = JSON.parse(str, reviver)
+
+    return state;
+  } catch (err) {
+    console.error(err);
+    // TODO - could check for different program states, like FILE_PATH not found, or bad data.
+    // This just defaults to empty state
+    return state;
+  }
+}
+
+restoreState(); // TODO we could/should await this in the cli b4 first prompt?
 
 export const Inventory = {
   add(book: Book) {
-    bookList.push(book);
+    state.books.push(book);
+    saveState();
   },
   count() {
-    return bookList.length;
+    return state.books.length;
   },
   isCheckedOut(id: BookId) {
-    return checkedOutBooks.has(id);
+    return state.checkedOutBooks.has(id);
   },
   checkoutById(id: BookId) {
-    checkedOutBooks.add(id);
+    state.checkedOutBooks.add(id);
+    saveState();
   },
   returnById(id: BookId) {
-    checkedOutBooks.delete(id);
+    state.checkedOutBooks.delete(id);
+    saveState();
   },
   search(searchTerm: string) {
     const searchPattern = new RegExp(searchTerm, "i");
 
-    const foundBook = bookList.find((book) => {
+    const foundBook = state.books.find((book) => {
       const titleMatch = book.title.match(searchPattern);
       const authorMatch = book.author.match(searchPattern);
       const idMatch = book.id.match(searchPattern);

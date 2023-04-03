@@ -59,7 +59,7 @@ function dispatch(actionName: ACTION_TYPES): Promise<void> {
       console.clear();
       return Promise.resolve();
     case "Exit":
-      successMessage("Good bye 👋  (your library inventory will be purged)");
+      successMessage("Good bye 👋 (your library inventory is saved to state.data)");
       process.exit(0);
   }
 }
