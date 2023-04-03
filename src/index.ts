@@ -3,7 +3,7 @@ import {
   BookId,
   isHex,
   isId,
-  isNumber,
+  isPositiveInt,
   makeBookId,
   makeBook,
   Inventory,
@@ -32,33 +32,25 @@ type ACTION_TYPES = (typeof ACTIONS)[number];
 
 function dispatch(actionName: ACTION_TYPES): Promise<void> {
   switch (actionName) {
-    case "Add a Book": {
+    case "Add a Book":
       return addBook();
-    }
-    case "Checkout a Book": {
+    case "Checkout a Book":
       return checkoutBook();
-    }
-    case "Return a Book": {
+    case "Return a Book":
       return returnBook();
-    }
-    case "Check Book State": {
+    case "Check Book State":
       return checkBookState();
-    }
-    case "Search for a Book": {
+    case "Search for a Book":
       return searchForBook();
-    }
-    case "Count Books": {
+    case "Count Books":
       successMessage(`Library has ${Inventory.count()} books`);
       return Promise.resolve();
-    }
-    case "Clear Terminal": {
+    case "Clear Terminal":
       console.clear();
       return Promise.resolve();
-    }
-    case "Exit": {
+    case "Exit":
       successMessage("Good bye 👋  (your library inventory will be purged)");
       process.exit(0);
-    }
   }
 }
 
@@ -83,7 +75,7 @@ const BOOK_ID_PROMPT: InputQuestion<{ id: string }> = {
   name: "id",
   message: "Book ID Number: ",
   validate(input: string) {
-    if (isNumber(input.trim())) {
+    if (isPositiveInt(input.trim())) {
       return true;
     }
 
@@ -158,7 +150,7 @@ async function checkoutBook() {
 
   const result = Inventory.search(cleanBookId);
   if (result) {
-    Inventory.checkout(cleanBookId);
+    Inventory.checkoutById(cleanBookId);
     successMessage(`Checked out ${cleanBookId}`);
   } else {
     warningMessage(`Could not find ${cleanBookId}`);
@@ -176,7 +168,7 @@ async function returnBook() {
 
   const result = Inventory.search(cleanBookId);
   if (result) {
-    Inventory.return(cleanBookId);
+    Inventory.returnById(cleanBookId);
     successMessage(`Returned ${cleanBookId}`);
   } else {
     warningMessage(`Could not find ${cleanBookId}`);

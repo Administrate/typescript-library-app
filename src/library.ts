@@ -19,7 +19,7 @@ const validChars = [
 
 // index the type of our array to get a union of all the array elements
 // this allows us to use the array at runtime and derive the type at compile time
-type HEX_CHAR = (typeof validChars)[number];
+type HEX_CHAR = typeof validChars[number];
 export type HEX_PREFIX = `${HEX_CHAR}${HEX_CHAR}`;
 
 export type BookId = `${HEX_PREFIX}-${number}`;
@@ -81,10 +81,10 @@ export function isId(input: any): input is BookId {
     return false;
   }
 
-  return isNumber(num);
+  return isPositiveInt(num);
 }
 
-export function isNumber(input: any): input is number {
+export function isPositiveInt(input: any): input is number {
   if (typeof input === "string") {
     const int = parseInt(input);
 
@@ -109,10 +109,10 @@ export const Inventory = {
   isCheckedOut(id: BookId) {
     return checkedOutBooks.has(id);
   },
-  checkout(id: BookId) {
+  checkoutById(id: BookId) {
     checkedOutBooks.add(id);
   },
-  return(id: BookId) {
+  returnById(id: BookId) {
     checkedOutBooks.delete(id);
   },
   search(searchTerm: string) {
