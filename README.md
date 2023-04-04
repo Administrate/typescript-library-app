@@ -8,7 +8,7 @@ To run this app you'll need Node v18, and I recommend getting [pnpm](https://pnp
 but replacing pnpm with npm below will work as well.
 
 ```sh
-brew instll pnpm
+brew install pnpm
 ```
 
 To run the app, run the following:
