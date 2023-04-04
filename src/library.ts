@@ -127,8 +127,6 @@ let state: State = {
   checkedOutBooks: new Set()
 };
 
-const FILE_PATH = "state.data";
-
 function replacer(key: string, value: string) {
   if (key === "checkedOutBooks") {
     return Array.from(value);
@@ -148,6 +146,8 @@ function reviver(key: string, value: string) {
 
   return value;
 }
+
+const FILE_PATH = "state.data";
 
 // book list can be serialized straightaway as JSON
 // our Set will need a special serializer
