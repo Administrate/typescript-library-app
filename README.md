@@ -1,6 +1,6 @@
 # The CLI Library
 
-This is an accompanying CLI app for the [advanced typescript blog post]().
+This is an accompanying CLI app for the [advanced typescript blog post](https://engineering.getadministrate.com/typescript/2023/04/06/advanced-typescript.html).
 
 ## Setup
 
